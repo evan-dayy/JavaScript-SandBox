@@ -186,11 +186,17 @@ const courseSchema3 = new mongoose.Schema({
     }
 });
 
+
 // Async Validations
 // sometimes the validation process may invlove in a reading database process or http process
 // as a result, we may not have answer straight way
 // which suggesting we need async validations 
 const courseSchema4 = new mongoose.Schema({
+    price: {
+        type: Number,
+        set: v => Math.round(v),
+        get: v => Math.round(v)
+    },
     tags: {
         type: Array,
         validate: {
@@ -199,5 +205,73 @@ const courseSchema4 = new mongoose.Schema({
             },
             message: "The tags should have at least one tag"
         }
+    },
+
+    tags2: {
+        type: Array,
+        validate: {
+            //isAsync: true, // depreciated
+            validator : async function(v) {
+                return await operations(v); // alway remember we are await a promise
+            },
+            message: "The tags should have at least one tag"
+        }
     }
 });
+
+function operations(v) {
+    DatabaseDebugger("Operation in process ....")
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            DatabaseDebugger("Operation Completed ....")
+            resolve(v && v.length > 0);
+        }, 5000);
+    })
+}
+
+
+
+const Course4 = mongoose.model('Course4', courseSchema4);
+async function createCourse4() {
+    const course = new Course4({
+        price: 20.2,
+        tags: [1, 2],
+        tags2: ["a"]
+    });
+    const result = await course.save();
+    DatabaseDebugger(result);
+}
+
+async function getCourse4(id) {
+    const course = await Course4.findById(id);
+    DatabaseDebugger(course.price);
+}
+
+
+// createCourse4();
+getCourse4('649790db0247f35c87d24d3b');
+
+
+
+
+// addtional property for sechma type option
+/**
+ * @String
+ * {
+ * type: string,
+ * lowercase: true
+ * uppercase: true
+ * trim: true
+ * 
+ * }
+ */
+
+
+/**
+ * @*
+ * get : v => Math.round(v)
+ * set : v => Math.round(v)
+ *
+ * 
+ * }
+ */
