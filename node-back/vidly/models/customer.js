@@ -1,5 +1,7 @@
 const Joi = require('joi');
 const mongoose = require('mongoose');
+const DatabaseDebugger = require('debug')('app:database')
+const HttpDebugger = require('debug')('app:http'); 
 
 const Customer = mongoose.model('Customer', new mongoose.Schema({
   name: {
@@ -21,13 +23,13 @@ const Customer = mongoose.model('Customer', new mongoose.Schema({
 }));
 
 function validateCustomer(customer) {
-  const schema = {
+  const schema = Joi.object({
     name: Joi.string().min(5).max(50).required(),
     phone: Joi.string().min(5).max(50).required(),
     isGold: Joi.boolean()
-  };
+  });
 
-  return Joi.validate(customer, schema);
+  return schema.validate(customer, schema);
 }
 
 exports.Customer = Customer; 

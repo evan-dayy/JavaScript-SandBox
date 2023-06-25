@@ -2,6 +2,8 @@ const {Genre, validate} = require('../models/genre');
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
+const DatabaseDebugger = require('debug')('app:database')
+const HttpDebugger = require('debug')('app:http'); 
 
 router.get('/', async (req, res) => {
   const genres = await Genre.find().sort('name');

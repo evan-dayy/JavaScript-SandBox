@@ -1,7 +1,9 @@
-const {Customer, validate} = require('../models/customer'); 
+const { Customer, validate } = require('../models/customer'); 
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
+const DatabaseDebugger = require('debug')('app:database')
+const HttpDebugger = require('debug')('app:http'); 
 
 router.get('/', async (req, res) => {
   const customers = await Customer.find().sort('name');
