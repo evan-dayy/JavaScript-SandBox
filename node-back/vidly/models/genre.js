@@ -3,14 +3,16 @@ const mongoose = require('mongoose');
 const DatabaseDebugger = require('debug')('app:database')
 const HttpDebugger = require('debug')('app:http'); 
 
-const Genre = mongoose.model('Genre', new mongoose.Schema({
+const GenreSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
     minlength: 5,
     maxlength: 50
   }
-}));
+});
+
+const Genre = mongoose.model('Genre', GenreSchema);
 
 function validateGenre(genre) {
   Joi.Ob
@@ -23,3 +25,4 @@ function validateGenre(genre) {
 
 exports.Genre = Genre; 
 exports.validate = validateGenre;
+exports.GenreSchema = GenreSchema;
