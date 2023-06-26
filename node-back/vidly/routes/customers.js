@@ -13,7 +13,6 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   const { error } = validate(req.body); 
   if (error) return res.status(400).send(error.details[0].message);
-
   let customer = new Customer({ 
     name: req.body.name,
     isGold: req.body.isGold,

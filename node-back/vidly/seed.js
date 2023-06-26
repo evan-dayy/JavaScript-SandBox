@@ -1,5 +1,5 @@
 const { Genre } = require("./models/genre");
-const { Movie } = require("./models/movies");
+const { Movie } = require("./models/movie");
 const mongoose = require("mongoose");
 const config = require("config");
 
@@ -54,7 +54,6 @@ async function seed() {
   }
 
   mongoose.disconnect();
-
   console.info("Done!");
 }
 

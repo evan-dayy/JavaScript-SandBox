@@ -4,7 +4,7 @@ const DatabaseDebugger = require('debug')('app:database')
 const HttpDebugger = require('debug')('app:http'); 
 const { GenreSchema } = require('./genre')
 
-const Moives = mongoose.model('movie', new mongoose.Schema({
+const Moive = mongoose.model('movie', new mongoose.Schema({
     title : {
         type : String,
         required: true,
@@ -41,6 +41,6 @@ function validateMovie(movie) {
 }
 
 
-exports.Movie = Moives;
+exports.Movie = Moive;
 exports.alidateMovie = validateMovie
 

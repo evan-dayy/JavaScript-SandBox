@@ -7,6 +7,7 @@ const express = require('express');
 const app = express();
 const DatabaseDebugger = require('debug')('app:database')
 const HttpDebugger = require('debug')('app:http'); 
+const morgan = require('morgan');
 
 async function connect() {
   await mongoose.connect('mongodb://localhost/vidly')
@@ -16,6 +17,7 @@ async function connect() {
 connect()
 
 app.use(express.json());
+app.use(morgan('tiny'));
 app.use('/api/genres', genres);
 app.use('/api/customers', customers);
 app.use('/api/movies', movies);

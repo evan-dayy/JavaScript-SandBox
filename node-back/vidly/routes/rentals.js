@@ -1,11 +1,13 @@
-const {Rental, validate} = require('../models/rentals'); 
-const {Movie} = require('../models/movies'); 
+const {Rental, validate} = require('../models/rental'); 
+const {Movie} = require('../models/movie'); 
 const {Customer} = require('../models/customer'); 
 const mongoose = require('mongoose');
 const Fawn = require('fawn');
 const express = require('express');
 const router = express.Router();
-Fawn.init("mongodb://localhost/vidly"); // directly coonect to localhost
+const DatabaseDebugger = require('debug')('app:database')
+const HttpDebugger = require('debug')('app:http'); 
+// Fawn.init("mongodb://localhost/vidly"); // directly coonect to localhost // Fawn is depreciated
 
 router.get('/', async (req, res) => {
   const rentals = await Rental.find().sort('-dateOut');
@@ -15,7 +17,6 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   const { error } = validate(req.body); 
   if (error) return res.status(400).send(error.details[0].message);
-
   const customer = await Customer.findById(req.body.customerId);
   if (!customer) return res.status(400).send('Invalid customer.');
 
@@ -34,20 +35,28 @@ router.post('/', async (req, res) => {
       dailyRentalRate: movie.dailyRentalRate
     }
   });
+  
   // Transaction
+  await rental.save()
+  DatabaseDebugger(movie._id);
+  const session = await mongoose.startSession();
   try {
-    Fawn.Task()
-        .save('rentals', rental)
-        .update('movies', {_id : movie._id}, {
-            $inc : {
-                numberInStock : -1
-            }
-        }).run();
-    rental = await rental.save();
-  } catch (err) {
-    res.status(500).send('Something failed ....');
+    await session.withTransaction(async () => {
+      rental.save();
+      const new_movie = await Movie.findByIdAndUpdate({_id : movie._id}, {
+        $inc : {
+            numberInStock : -1
+        }
+      }, {new : true});
+      res.send(rental);
+    });
+  } catch(err) {
+    DatabaseDebugger("Something crash or goes wrong ....")
+  } finally {
+    await session.endSession();
   }
 });
+
 
 router.get('/:id', async (req, res) => {
   const rental = await Rental.findById(req.params.id);
