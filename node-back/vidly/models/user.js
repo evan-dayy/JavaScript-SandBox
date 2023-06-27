@@ -27,7 +27,7 @@ const schema = new mongoose.Schema({
   });
 
 schema.methods.generateToken = function() {
-    return jwt.sign({_id : this._id, isAdmin: this.isAdmin}, config.get('jwtPrivateKey'))
+    return jwt.sign({_id : this._id, isAdmin: this.isAdmin}, config.get('jwtPrivateKey')) // sign with a private local key
 } // way to encapsulate a method in the scehma
 
 const User = mongoose.model('User', schema);

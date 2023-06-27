@@ -1,5 +1,5 @@
 
-
+// the middleware should run after the auth
 module.exports = function(req, res, next) {
     if (!req.user.isAdmin) {
         // 401: Unauthorized => no JWT => you can try again
