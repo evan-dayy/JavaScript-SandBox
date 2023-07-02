@@ -6,6 +6,7 @@ const Fawn = require('fawn');
 const express = require('express');
 const router = express.Router();
 const DatabaseDebugger = require('debug')('app:database')
+const TransactionDebugger = require('debug')('app:transaction')
 const HttpDebugger = require('debug')('app:http'); 
 const auth = require('../middleware/auth');
 
@@ -39,44 +40,29 @@ router.post('/', auth, async (req, res) => {
     }
   });
   // Transaction
-  // await rental.save()
-  // DatabaseDebugger(movie._id);
   let session = null;
-  try{
-    await mongoose.startSession()
+  await mongoose.startSession()
       .then(async (_session) => {
         session = _session;
-        await session.startTransaction();
-        return Rental.create([rental], {session : session});
+        try {
+          await session.withTransaction(async () => {
+            Rental.create([rental], {session : session});
+            await Movie.findByIdAndUpdate({_id : movie._id}, {
+                    $inc : {
+                        numberInStock : -1
+                    }
+                  }, {new : true}).session(session);
+            // throw new Error("Something crash or goes wrong ....");
+            res.send(rental);
+          }
+        )} catch(err) {
+          TransactionDebugger("Something crash or goes wrong ....")
+          res.send("Transaction failed, everything should roll back...")
+        }
       })
       .then(() => {
-        throw new Error("Something failed during the transaction ...");
+        session.endSession();
       })
-    } catch(err) {
-      DatabaseDebugger(err.message);
-      res.send("Transaction failed ...");
-      session.abortTransaction();
-    } finally {
-      session.endSession();
-    }
-  // try {
-  //     session.startTransaction();
-  //     Rental.create([rental], {session : session});
-  //     throw new Error("Something failed during the transaction ...");
-  //     const new_movie = await Movie.findByIdAndUpdate({_id : movie._id}, {
-  //       $inc : {
-  //           numberInStock : -1
-  //       }
-  //     }, {new : true}).session(session);
-  //     res.send(rental);
-  // } catch(err) {
-  //   DatabaseDebugger("Something crash or goes wrong ....")
-  //   DatabaseDebugger(err.message);
-  //   res.send("Transaction failed ...")
-  // } finally {
-  //   session.abortTransaction();
-  //   session.endSession();
-  // }
 });
 
 
