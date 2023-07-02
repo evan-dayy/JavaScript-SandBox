@@ -40,7 +40,10 @@ const data = [
 
 
 async function seed() {
-  await mongoose.connect(config.get("db"));
+  await mongoose.connect(config.get("dbserver") 
+                      + config.get("dbuser") 
+                      + config.get("dbpassword") 
+                      + config.get("dbconnection"));
   await Movie.deleteMany({});
   await Genre.deleteMany({});
 

@@ -15,14 +15,26 @@ const LocalDebugger = require('debug')('app:local');
 const morgan = require('morgan');
 const config = require('config')
 
+// check jwtPrivateKey
 if (!config.get("jwtPrivateKey")) {
   LocalDebugger("Cannot find jwt Private Key in local environment ...")
   process.exit(1); // 0 indicate sucess, 1 indicate failure
 }
+LocalDebugger("Found jwt Private Key in local environment ...");
 
-LocalDebugger("Found jwt Private Key in local environment ...")
+if (!config.get("dbuser") || !config.get("dbpassword")) {
+  LocalDebugger("Cannot find DB user, currently we are using MongoDB Atlas ...")
+  process.exit(1); // 0 indicate sucess, 1 indicate failure
+}
+LocalDebugger("Found Atlas DB user and password in local environment ...");
+
+
+
 async function connect() {
-  await mongoose.connect('mongodb://localhost/vidly')
+  await mongoose.connect(config.get("dbserver") 
+                        + config.get("dbuser") 
+                        + config.get("dbpassword") 
+                        + config.get("dbconnection"))
     .then(() => DatabaseDebugger('Connected to MongoDB...'))
     .catch(err => DatabaseDebugger('Could not connect to MongoDB...'));
 }

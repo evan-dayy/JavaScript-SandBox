@@ -8,6 +8,7 @@ const router = express.Router();
 const DatabaseDebugger = require('debug')('app:database')
 const HttpDebugger = require('debug')('app:http'); 
 const auth = require('../middleware/auth');
+
 // Fawn.init("mongodb://localhost/vidly"); // directly coonect to localhost // Fawn is depreciated
 
 router.get('/', async (req, res) => {
@@ -37,26 +38,45 @@ router.post('/', auth, async (req, res) => {
       dailyRentalRate: movie.dailyRentalRate
     }
   });
-  
   // Transaction
-  await rental.save()
-  DatabaseDebugger(movie._id);
-  const session = await mongoose.startSession();
-  try {
-    await session.withTransaction(async () => {
-      rental.save();
-      const new_movie = await Movie.findByIdAndUpdate({_id : movie._id}, {
-        $inc : {
-            numberInStock : -1
-        }
-      }, {new : true});
-      res.send(rental);
-    });
-  } catch(err) {
-    DatabaseDebugger("Something crash or goes wrong ....")
-  } finally {
-    await session.endSession();
-  }
+  // await rental.save()
+  // DatabaseDebugger(movie._id);
+  let session = null;
+  try{
+    await mongoose.startSession()
+      .then(async (_session) => {
+        session = _session;
+        await session.startTransaction();
+        return Rental.create([rental], {session : session});
+      })
+      .then(() => {
+        throw new Error("Something failed during the transaction ...");
+      })
+    } catch(err) {
+      DatabaseDebugger(err.message);
+      res.send("Transaction failed ...");
+      session.abortTransaction();
+    } finally {
+      session.endSession();
+    }
+  // try {
+  //     session.startTransaction();
+  //     Rental.create([rental], {session : session});
+  //     throw new Error("Something failed during the transaction ...");
+  //     const new_movie = await Movie.findByIdAndUpdate({_id : movie._id}, {
+  //       $inc : {
+  //           numberInStock : -1
+  //       }
+  //     }, {new : true}).session(session);
+  //     res.send(rental);
+  // } catch(err) {
+  //   DatabaseDebugger("Something crash or goes wrong ....")
+  //   DatabaseDebugger(err.message);
+  //   res.send("Transaction failed ...")
+  // } finally {
+  //   session.abortTransaction();
+  //   session.endSession();
+  // }
 });
 
 

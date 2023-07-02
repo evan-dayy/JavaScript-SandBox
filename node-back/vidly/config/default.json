@@ -1,4 +1,8 @@
 {
-    "db" : "mongodb://localhost/vidly",
+    "dbserver" : "mongodb+srv://",
+    "dbconnection" : "@vidly.xa1z0xm.mongodb.net/",
+    "dbuser": "",
+    "dbpassword" : "",
     "jwtPrivateKey" : ""
 }
+
