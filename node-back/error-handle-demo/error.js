@@ -40,3 +40,19 @@
  * winston also provide handle exception to catch these uncaught exception
  * 
  */ 
+
+// // uncaught exception
+// process.on('uncaughtException', (ex) => {
+//   DatabaseDebugger('Uncaught Exception ...');
+//   // winston.error(ex.message, ex);
+//   // process.exit(1);
+//   throw ex;
+// })
+// same as
+// winston.handleExceptions(new winston.transports.File({filename: 'uncaughtException.log'})); 
+
+// uncaught exception may happen in the following code
+// throw new Error('Uncaught Exception ...');
+// unhandled rejection can also be caught by uncaught exception
+// const p = Promise.reject(new Error('Something failed miserably!'));
+// p.then(() => console.log('Done'));
