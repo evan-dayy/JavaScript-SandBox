@@ -7,3 +7,8 @@ module.exports = function(handler) {
         }
     }
 }
+
+/**
+ * the function can be replaced by the express-async-errors package
+ * 
+ */
