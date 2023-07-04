@@ -41,7 +41,7 @@ router.post('/', auth, async (req, res) => {
   });
   // Transaction
   let session = null;
-  await mongoose.startSession()
+  mongoose.startSession()
       .then(async (_session) => {
         session = _session;
         try {

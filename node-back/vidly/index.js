@@ -27,11 +27,16 @@ const express = require('express');
 const errorHandler = require('./middleware/errorHandler');
 const app = express();
 
-// uncaught exception
-process.on('uncaughtException', (ex) => {
-  DatabaseDebugger('Uncaught Exception ...');
-  winston.error(ex.message, ex);
-})
+// // uncaught exception
+// process.on('uncaughtException', (ex) => {
+//   DatabaseDebugger('Uncaught Exception ...');
+//   // winston.error(ex.message, ex);
+//   // process.exit(1);
+//   throw ex;
+// })
+// same as
+winston.handleExceptions(new winston.transports.File({filename: 'uncaughtException.log'})); 
+
 
 // check jwtPrivateKey
 if (!config.get("jwtPrivateKey")) {
@@ -65,8 +70,8 @@ connect();
 // uncaught exception
 // throw new Error('Uncaught Exception ...');
 // unhandled rejection can also be caught by uncaught exception
-const p = Promise.reject(new Error('Something failed miserably!'));
-p.then(() => console.log('Done'));
+// const p = Promise.reject(new Error('Something failed miserably!'));
+// p.then(() => console.log('Done'));
 
 app.use(express.json());
 app.use(morgan('tiny'));

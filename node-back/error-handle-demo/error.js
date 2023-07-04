@@ -35,4 +35,8 @@
  * so, how to get these uncaught exception?
  *  using the process.on('uncaughtException', (ex) => {winston.error(ex.message, ex);}) 
  *  this method is only working for synchronous code // however, it is not handled by the process
+ * 
+ * The best practice of the these uncaught exception is to terminate the process and restart it
+ * winston also provide handle exception to catch these uncaught exception
+ * 
  */ 
