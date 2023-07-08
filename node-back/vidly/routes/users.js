@@ -21,6 +21,7 @@ router.post('/', async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(req.body.password, salt);
     await user.save();
+    // usually we do not authenticate user when they are signing up
     const token = user.generateToken(); // method defined in model
     res.header('x-auth-token', token).send(_.pick(user, ['name', 'email']));
   });
