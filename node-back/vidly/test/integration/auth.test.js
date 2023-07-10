@@ -3,10 +3,12 @@ const {Genre} = require('../../models/genre');
 const request = require('supertest');
 
 describe('auth middleware', () => {
-  beforeEach(() => { server = require('../../server'); })
+  beforeEach(() => { 
+    server = require('../../server'); 
+  })
   afterEach(async () => { 
     await Genre.deleteMany({});
-    server.close(); 
+    await server.close(); 
   });
 
   let token; 
