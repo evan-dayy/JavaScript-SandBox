@@ -1,6 +1,6 @@
 {
     "dbserver" : "mongodb+srv://",
-    "dbconnection" : "@vidly.xa1z0xm.mongodb.net/vidly",
+    "dbconnection" : "@vidly.xa1z0xm.mongodb.net/vidly_test",
     "dbuser": "",
     "dbpassword" : "",
     "jwtPrivateKey" : "1234"
