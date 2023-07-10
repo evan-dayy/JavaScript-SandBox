@@ -13,6 +13,7 @@ require('./startup/logging')(); // debuggers and error handler
 require('./startup/config')(); // configuration
 require('./startup/validation')(); // Joi validation
 require('./startup/routes')(app); // routers and middleware
+require('./startup/prod')(app); // production middleware -- prepping for deployment
 require('./startup/db')(); // database connection
 
 // all set, start the server
