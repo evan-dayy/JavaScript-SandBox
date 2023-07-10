@@ -16,10 +16,5 @@ require('./startup/routes')(app); // routers and middleware
 require('./startup/db')(); // database connection
 
 // all set, start the server
-const port = process.env.PORT || 3000;
-const server = app.listen(port, () => {
-  HttpDebugger(`Listening on port ${port}...`);
-  winston.info('Listening on port 3000...');
-});
 
-module.exports = server; // for testing
+module.exports = app; // for testing
