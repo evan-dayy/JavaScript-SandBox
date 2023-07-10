@@ -17,7 +17,9 @@ require('./startup/db')(); // database connection
 
 // all set, start the server
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
+const server = app.listen(port, () => {
   HttpDebugger(`Listening on port ${port}...`);
   winston.info('Listening on port 3000...');
 });
+
+module.exports = server; // for testing

@@ -12,7 +12,7 @@ module.exports = function() {
                         + config.get("dbconnection"))
     .then(() => {
         // throw(new Error("FATAL ERROR: DB user and password is not defined"));
-        DatabaseDebugger('Connected to MongoDB...');
+        DatabaseDebugger(`Connected to MongoDB at ${config.get("dbconnection")}...`);
         winston.info('Connected to MongoDB...');
         
     })
